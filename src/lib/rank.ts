@@ -16,9 +16,13 @@ function recencyScore(pubDate: string | null, now: number): number {
   return 100 * Math.pow(0.5, ageHours / HALF_LIFE_HOURS);
 }
 
-function keywordScore(title: string): number {
+export function isBreakingTitle(title: string): boolean {
   const lower = title.toLowerCase();
-  return BREAKING_KEYWORDS.some((keyword) => lower.includes(keyword)) ? BREAKING_BONUS : 0;
+  return BREAKING_KEYWORDS.some((keyword) => lower.includes(keyword));
+}
+
+function keywordScore(title: string): number {
+  return isBreakingTitle(title) ? BREAKING_BONUS : 0;
 }
 
 export function scoreArticle(article: Article, now: number = Date.now()): number {

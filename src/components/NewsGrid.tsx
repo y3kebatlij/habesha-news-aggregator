@@ -1,11 +1,12 @@
 import type { Article } from "@/lib/types";
 import { ArticleCard } from "./ArticleCard";
+import { strings } from "@/lib/strings";
 
 export function NewsGrid({ articles }: { articles: Article[] }) {
   if (articles.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-border py-16 text-center text-muted">
-        No articles found right now. Check back soon.
+        {strings.grid.empty}
       </div>
     );
   }

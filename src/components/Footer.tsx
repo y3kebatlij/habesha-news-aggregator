@@ -1,15 +1,14 @@
 import { SOURCES } from "@/lib/sources";
+import { strings } from "@/lib/strings";
 
 export function Footer() {
   return (
     <footer className="mt-auto border-t border-border bg-surface">
       <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-muted sm:px-6">
-        <p>
-          Headlines are pulled from each publisher&apos;s public RSS feed and link back to the
-          original article. Habesha News does not host or modify the underlying reporting.
-        </p>
+        <p className="text-foreground/80">{strings.footer.about}</p>
+        <p className="mt-3">{strings.footer.disclaimer}</p>
         <p className="mt-3">
-          Sources:{" "}
+          {strings.footer.sourcesLabel}{" "}
           {SOURCES.map((source, index) => (
             <span key={source.id}>
               <a

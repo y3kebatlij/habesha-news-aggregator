@@ -164,7 +164,7 @@ Explicitly decided against for v1 (don't build):
   when we get to v1.5.
 - Whether ranking needs per-category tuning (e.g. Sports "breaking" keywords
   differ from Politics).
-- The repo currently lives inside a git root at the home directory
-  (`C:\Users\dell`), not this project folder — worth fixing before this
-  project grows, to avoid ever accidentally tracking unrelated home-dir
-  files.
+- ~~The repo currently lives inside a git root at the home directory...~~ —
+  resolved: the project has its own `.git` at the project root (confirmed
+  2026-09-01). It has no remote configured yet; add one before deploying to
+  Vercel.

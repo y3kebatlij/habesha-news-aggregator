@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { NewsGrid } from "@/components/NewsGrid";
+import { LoadMoreGrid } from "@/components/LoadMoreGrid";
 import { getArticles } from "@/lib/fetchNews";
 import { CATEGORIES, type CategorySlug } from "@/lib/types";
 import { relativeTime } from "@/lib/time";
+import { strings } from "@/lib/strings";
 
 export const revalidate = 0;
 
@@ -35,11 +36,11 @@ export default async function CategoryPage({
         <div className="mb-5 flex flex-wrap items-center justify-between gap-2">
           <h1 className="text-lg font-semibold">{label}</h1>
           <p className="text-xs text-muted">
-            Updated {relativeTime(new Date(fetchedAt).toISOString())}
-            {stale && " · showing cached results, a source may be unreachable"}
+            {strings.home.updatedPrefix} {relativeTime(new Date(fetchedAt).toISOString())}
+            {stale && ` · ${strings.home.staleNote}`}
           </p>
         </div>
-        <NewsGrid articles={filtered} />
+        <LoadMoreGrid articles={filtered} />
       </main>
       <Footer />
     </>
