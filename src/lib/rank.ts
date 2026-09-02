@@ -1,8 +1,10 @@
 import type { Article } from "./types";
+import { clusterSourceCountById } from "./cluster";
 
 const HALF_LIFE_HOURS = 8;
 const BREAKING_BONUS = 25;
 const HERO_WINDOW = 6;
+const CLUSTER_BREAKING_SOURCES = 3;
 
 const BREAKING_KEYWORDS = ["breaking", "urgent", "developing", "just in", "alert"];
 
@@ -21,12 +23,18 @@ export function isBreakingTitle(title: string): boolean {
   return BREAKING_KEYWORDS.some((keyword) => lower.includes(keyword));
 }
 
-function keywordScore(title: string): number {
-  return isBreakingTitle(title) ? BREAKING_BONUS : 0;
+// Real cross-source signal (≥3 outlets independently covering the same
+// story) alongside the naive keyword check — either one counts as breaking.
+export function isBreakingArticle(article: Article, sourceCount: number): boolean {
+  return isBreakingTitle(article.title) || sourceCount >= CLUSTER_BREAKING_SOURCES;
 }
 
-export function scoreArticle(article: Article, now: number = Date.now()): number {
-  return recencyScore(article.pubDate, now) + keywordScore(article.title);
+function breakingScore(article: Article, sourceCount: number): number {
+  return isBreakingArticle(article, sourceCount) ? BREAKING_BONUS : 0;
+}
+
+export function scoreArticle(article: Article, sourceCount: number, now: number = Date.now()): number {
+  return recencyScore(article.pubDate, now) + breakingScore(article, sourceCount);
 }
 
 // Hero window enforces one-article-per-source so a single prolific outlet can't
@@ -34,10 +42,17 @@ export function scoreArticle(article: Article, now: number = Date.now()): number
 export function rankArticles(
   articles: Article[],
   { now = Date.now(), heroWindow = HERO_WINDOW }: { now?: number; heroWindow?: number } = {},
-): Article[] {
-  const byScoreDesc = [...articles].sort((a, b) => scoreArticle(b, now) - scoreArticle(a, now));
+): { articles: Article[]; clusterSourceCountById: Map<string, number> } {
+  const sourceCountById = clusterSourceCountById(articles, now);
+  const countFor = (article: Article) => sourceCountById.get(article.id) ?? 1;
 
-  if (byScoreDesc.length <= heroWindow) return byScoreDesc;
+  const byScoreDesc = [...articles].sort(
+    (a, b) => scoreArticle(b, countFor(b), now) - scoreArticle(a, countFor(a), now),
+  );
+
+  if (byScoreDesc.length <= heroWindow) {
+    return { articles: byScoreDesc, clusterSourceCountById: sourceCountById };
+  }
 
   const hero: Article[] = [];
   const deferred: Article[] = [];
@@ -58,5 +73,5 @@ export function rankArticles(
     hero.push(deferred.shift()!);
   }
 
-  return [...hero, ...deferred];
+  return { articles: [...hero, ...deferred], clusterSourceCountById: sourceCountById };
 }

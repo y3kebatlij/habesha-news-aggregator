@@ -4,7 +4,7 @@ import { BreakingBanner } from "@/components/BreakingBanner";
 import { ArticleCard } from "@/components/ArticleCard";
 import { LoadMoreGrid } from "@/components/LoadMoreGrid";
 import { getArticles } from "@/lib/fetchNews";
-import { rankArticles, isBreakingTitle } from "@/lib/rank";
+import { rankArticles, isBreakingArticle } from "@/lib/rank";
 import { relativeTime } from "@/lib/time";
 import { strings } from "@/lib/strings";
 
@@ -12,9 +12,10 @@ export const revalidate = 0;
 
 export default async function HomePage() {
   const { articles, fetchedAt, stale } = await getArticles();
-  const ranked = rankArticles(articles);
+  const { articles: ranked, clusterSourceCountById } = rankArticles(articles);
   const [lead, ...rest] = ranked;
-  const leadIsBreaking = lead ? isBreakingTitle(lead.title) : false;
+  const leadSourceCount = lead ? clusterSourceCountById.get(lead.id) ?? 1 : 1;
+  const leadIsBreaking = lead ? isBreakingArticle(lead, leadSourceCount) : false;
 
   return (
     <>
@@ -30,7 +31,13 @@ export default async function HomePage() {
         </div>
         {lead && (
           <div className="mb-6">
-            <ArticleCard article={lead} variant="hero" isBreaking={leadIsBreaking} id="lead-story" />
+            <ArticleCard
+              article={lead}
+              variant="hero"
+              isBreaking={leadIsBreaking}
+              sourceCount={leadSourceCount}
+              id="lead-story"
+            />
           </div>
         )}
         <LoadMoreGrid articles={rest} />

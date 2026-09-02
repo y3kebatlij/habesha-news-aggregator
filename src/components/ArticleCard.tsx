@@ -6,11 +6,13 @@ export function ArticleCard({
   article,
   variant = "grid",
   isBreaking = false,
+  sourceCount,
   id,
 }: {
   article: Article;
   variant?: "grid" | "hero";
   isBreaking?: boolean;
+  sourceCount?: number;
   id?: string;
 }) {
   const categoryLabel = CATEGORIES.find((c) => c.slug === article.category)?.label ?? "General";
@@ -48,6 +50,11 @@ export function ArticleCard({
           {isBreaking && (
             <span className="rounded-full bg-brand-red px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-white">
               {strings.breaking.pill}
+            </span>
+          )}
+          {sourceCount !== undefined && sourceCount >= 3 && (
+            <span className="rounded-full bg-black/60 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">
+              {strings.cluster.coveredBy(sourceCount)}
             </span>
           )}
           <span className="rounded-full bg-black/60 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">
