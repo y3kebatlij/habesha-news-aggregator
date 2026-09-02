@@ -7,6 +7,12 @@ export type CategorySlug =
   | "diaspora"
   | "general";
 
+// Which section an article belongs to — "ethiopia" powers the homepage and
+// category pages, "east-africa" powers the standalone /region/east-africa
+// page. Deliberately not folded into CategorySlug: an East Africa story
+// isn't a "category" of Ethiopian news, it's a different section entirely.
+export type Region = "ethiopia" | "east-africa";
+
 export type Article = {
   id: string;
   title: string;
@@ -19,6 +25,7 @@ export type Article = {
   sourceUrl: string;
   language: "en" | "am";
   category: CategorySlug;
+  region: Region;
 };
 
 export type Category = {

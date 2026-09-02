@@ -100,6 +100,7 @@ async function fetchSourceArticles(source: (typeof SOURCES)[number]): Promise<Ar
         sourceUrl: source.siteUrl,
         language: source.language,
         category: categorize(title, snippet),
+        region: source.region,
       } satisfies Article;
     });
 }

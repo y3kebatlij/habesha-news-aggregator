@@ -27,7 +27,9 @@ export default async function CategoryPage({
 
   const label = CATEGORIES.find((category) => category.slug === slug)!.label;
   const { articles, fetchedAt, stale } = await getArticles();
-  const filtered = articles.filter((article) => article.category === slug);
+  const filtered = articles.filter(
+    (article) => article.region === "ethiopia" && article.category === slug
+  );
 
   return (
     <>

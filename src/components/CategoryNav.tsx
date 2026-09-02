@@ -7,7 +7,7 @@ import { CATEGORIES, type CategorySlug } from "@/lib/types";
 // at /category/general). See ARCHITECTURE.md "UI decisions".
 const NAV_CATEGORIES = CATEGORIES.filter((category) => category.slug !== "general");
 
-export function CategoryNav({ active }: { active: CategorySlug | "all" }) {
+export function CategoryNav({ active }: { active: CategorySlug | "all" | "east-africa" }) {
   return (
     <nav className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
       <NavPill href="/" label={strings.nav.all} isActive={active === "all"} />
@@ -19,6 +19,11 @@ export function CategoryNav({ active }: { active: CategorySlug | "all" }) {
           isActive={active === category.slug}
         />
       ))}
+      <NavPill
+        href="/region/east-africa"
+        label={strings.nav.eastAfrica}
+        isActive={active === "east-africa"}
+      />
     </nav>
   );
 }
