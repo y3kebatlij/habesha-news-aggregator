@@ -28,6 +28,13 @@ export const strings = {
   languageTag: {
     am: "አማርኛ",
   },
+  search: {
+    placeholder: "Search headlines…",
+    submitLabel: "Search",
+    heading: "Search",
+    prompt: "Enter a search term to find headlines.",
+    resultsHeading: (query: string) => `Results for "${query}"`,
+  },
   footer: {
     about:
       "Habesha News pulls headlines from Ethiopian and diaspora publishers into one place, ranked by what's happening now rather than a raw feed of everything.",

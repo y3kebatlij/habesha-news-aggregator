@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CategoryNav } from "./CategoryNav";
 import { ThemeToggle } from "./ThemeToggle";
+import { SearchForm } from "./SearchForm";
 import { strings } from "@/lib/strings";
 import type { CategorySlug } from "@/lib/types";
 
@@ -18,7 +19,10 @@ export function Header({ active }: { active: CategorySlug | "all" }) {
             <span className="text-xl font-bold tracking-tight">{strings.siteName}</span>
             <span className="hidden text-sm text-muted sm:inline">{strings.tagline}</span>
           </Link>
-          <ThemeToggle />
+          <div className="flex items-center gap-3">
+            <SearchForm />
+            <ThemeToggle />
+          </div>
         </div>
         <CategoryNav active={active} />
       </div>
