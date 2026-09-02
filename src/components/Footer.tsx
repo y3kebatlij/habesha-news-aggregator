@@ -7,6 +7,7 @@ export function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-muted sm:px-6">
         <p className="text-foreground/80">{strings.footer.about}</p>
         <p className="mt-3">{strings.footer.disclaimer}</p>
+        <p className="mt-3">{strings.footer.transparencyDisclaimer}</p>
         <p className="mt-3">
           {strings.footer.sourcesLabel}{" "}
           {SOURCES.map((source, index) => (
