@@ -1,4 +1,4 @@
-import type { Region } from "./types";
+import type { CategorySlug, Region } from "./types";
 
 // Ownership/affiliation classification, not a political left-right rating —
 // that would require case-by-case editorial analysis we can't responsibly
@@ -27,6 +27,10 @@ export type Source = {
   transparencyNote?: string;
   scope: SourceScope;
   region: Region;
+  // Set for single-topic sources (e.g. a sports site). Keyword categorizing
+  // only understands English, so without this an Amharic sports headline
+  // would land in "General".
+  category?: CategorySlug;
 };
 
 export const SOURCES: Source[] = [
@@ -128,6 +132,28 @@ export const SOURCES: Source[] = [
     region: "ethiopia",
   },
   {
+    id: "athletics-africa",
+    name: "Athletics Africa",
+    feedUrl: "https://www.athletics.africa/news/africa/ethiopia/feed/",
+    siteUrl: "https://www.athletics.africa/news/africa/ethiopia/",
+    language: "en",
+    transparency: "unrated",
+    scope: "ethiopia",
+    region: "ethiopia",
+    category: "sports",
+  },
+  {
+    id: "hatriksport",
+    name: "HatrikSport",
+    feedUrl: "https://www.hatricksport.net/feed/",
+    siteUrl: "https://www.hatricksport.net/",
+    language: "am",
+    transparency: "unrated",
+    scope: "ethiopia",
+    region: "ethiopia",
+    category: "sports",
+  },
+  {
     id: "bbc-africa",
     name: "BBC News Africa",
     feedUrl: "https://feeds.bbci.co.uk/news/world/africa/rss.xml",
@@ -169,6 +195,19 @@ export const SOURCES: Source[] = [
     transparencyNote: "Funded by the French government but editorially independent of Ethiopia's government.",
     scope: "africa-broad",
     region: "ethiopia",
+  },
+  {
+    // ITWeb's Ethiopia location page has no feed of its own — its site-wide
+    // feed is pan-African, so this is Ethiopia-filtered like the global sources.
+    id: "itweb-africa",
+    name: "ITWeb Africa",
+    feedUrl: "https://itweb.africa/rss",
+    siteUrl: "https://itweb.africa/locations/zlP3gQ2qGRMnRD1W",
+    language: "en",
+    transparency: "unrated",
+    scope: "africa-broad",
+    region: "ethiopia",
+    category: "technology",
   },
   {
     id: "allafrica-kenya",

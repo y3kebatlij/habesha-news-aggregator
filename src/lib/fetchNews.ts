@@ -17,12 +17,13 @@ type FeedItem = {
   "media:thumbnail"?: { $?: { url?: string } };
 };
 
+const FETCH_TIMEOUT_MS = 10_000;
+const USER_AGENT = "Mozilla/5.0 (compatible; HabeshaNewsAggregator/1.0; +https://localhost)";
+
+// Feeds are downloaded with fetch() rather than rss-parser's parseURL():
+// some servers (e.g. Capital Ethiopia) gzip the response even when not asked
+// to, which parseURL can't decode. fetch() decompresses automatically.
 const parser = new Parser<Record<string, unknown>, FeedItem>({
-  timeout: 10_000,
-  headers: {
-    "User-Agent":
-      "Mozilla/5.0 (compatible; HabeshaNewsAggregator/1.0; +https://localhost)",
-  },
   customFields: {
     item: [
       ["content:encoded", "content:encoded"],
@@ -33,6 +34,11 @@ const parser = new Parser<Record<string, unknown>, FeedItem>({
 });
 
 const CACHE_TTL_MS = 15 * 60 * 1000;
+
+// Some feeds keep months-old items (BBC Amharic, Athletics Africa's archive),
+// which would otherwise appear alongside today's news. Undated items are kept
+// since there's no way to tell their age.
+const MAX_ARTICLE_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 
 let cache: { articles: Article[]; fetchedAt: number } | null = null;
 let inFlight: Promise<Article[]> | null = null;
@@ -79,7 +85,13 @@ function hashId(link: string): string {
 }
 
 async function fetchSourceArticles(source: (typeof SOURCES)[number]): Promise<Article[]> {
-  const feed = await parser.parseURL(source.feedUrl);
+  const response = await fetch(source.feedUrl, {
+    headers: { "User-Agent": USER_AGENT },
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+    cache: "no-store",
+  });
+  if (!response.ok) throw new Error(`HTTP ${response.status} from ${source.feedUrl}`);
+  const feed = await parser.parseString(await response.text());
 
   const articles = (feed.items ?? [])
     .filter((item) => item.title && item.link)
@@ -100,7 +112,7 @@ async function fetchSourceArticles(source: (typeof SOURCES)[number]): Promise<Ar
         sourceName: source.name,
         sourceUrl: source.siteUrl,
         language: source.language,
-        category: categorize(title, snippet),
+        category: source.category ?? categorize(title, snippet),
         region: source.region,
       } satisfies Article;
     });
@@ -115,11 +127,17 @@ async function fetchSourceArticles(source: (typeof SOURCES)[number]): Promise<Ar
 async function fetchAllArticles(): Promise<Article[]> {
   const results = await Promise.allSettled(SOURCES.map(fetchSourceArticles));
 
-  const articles = results.flatMap((result, index) => {
-    if (result.status === "fulfilled") return result.value;
-    console.error(`Failed to fetch feed for ${SOURCES[index].name}:`, result.reason);
-    return [];
-  });
+  const cutoff = Date.now() - MAX_ARTICLE_AGE_MS;
+  const articles = results
+    .flatMap((result, index) => {
+      if (result.status === "fulfilled") return result.value;
+      console.error(`Failed to fetch feed for ${SOURCES[index].name}:`, result.reason);
+      return [];
+    })
+    .filter((article) => {
+      const published = article.pubDate ? new Date(article.pubDate).getTime() : NaN;
+      return Number.isNaN(published) || published >= cutoff;
+    });
 
   articles.sort((a, b) => {
     const dateA = a.pubDate ? new Date(a.pubDate).getTime() : 0;
