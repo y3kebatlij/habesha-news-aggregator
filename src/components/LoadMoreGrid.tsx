@@ -5,7 +5,8 @@ import type { Article } from "@/lib/types";
 import { NewsGrid } from "./NewsGrid";
 import { strings } from "@/lib/strings";
 
-const PAGE_SIZE = 9;
+// 12 fills complete rows at every column count the grid uses (2, 3 and 4).
+const PAGE_SIZE = 12;
 
 export function LoadMoreGrid({ articles }: { articles: Article[] }) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);

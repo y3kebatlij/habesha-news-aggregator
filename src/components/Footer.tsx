@@ -4,7 +4,7 @@ import { strings } from "@/lib/strings";
 export function Footer() {
   return (
     <footer className="mt-auto border-t border-border bg-surface">
-      <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-muted sm:px-6">
+      <div className="mx-auto max-w-7xl 2xl:max-w-[1440px] px-4 py-8 text-sm text-muted sm:px-6 lg:px-8">
         <p className="text-foreground/80">{strings.footer.about}</p>
         <p className="mt-3">{strings.footer.disclaimer}</p>
         <p className="mt-3">{strings.footer.transparencyDisclaimer}</p>

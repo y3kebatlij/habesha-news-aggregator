@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Noto_Sans_Ethiopic } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
@@ -18,6 +18,16 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
+// Geist has no Ethiopic glyphs. Listing Noto Sans Ethiopic right after it in
+// the font stack means Amharic text renders in one consistent typeface on
+// every device instead of whatever system fallback the OS happens to have.
+// Not preloaded: the browser only fetches it when Ethiopic characters appear.
+const notoEthiopic = Noto_Sans_Ethiopic({
+  variable: "--font-noto-ethiopic",
+  subsets: ["ethiopic"],
+  preload: false,
+});
+
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -33,7 +43,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${notoEthiopic.variable} h-full antialiased`}
     >
       <head>
         <Script id="theme-init" strategy="beforeInteractive">
