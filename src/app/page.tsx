@@ -12,7 +12,9 @@ export const revalidate = 0;
 
 export default async function HomePage() {
   const { articles, fetchedAt, stale } = await getArticles();
-  const { articles: ranked, clusterSourceCountById } = rankArticles(articles);
+  const { articles: ranked, clusterSourceCountById } = rankArticles(
+    articles.filter((article) => article.region === "ethiopia"),
+  );
   const [lead, ...rest] = ranked;
   const leadSourceCount = lead ? clusterSourceCountById.get(lead.id) ?? 1 : 1;
   const leadIsBreaking = lead ? isBreakingArticle(lead, leadSourceCount) : false;

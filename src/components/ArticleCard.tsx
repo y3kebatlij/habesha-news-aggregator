@@ -1,6 +1,7 @@
 import { CATEGORIES, type Article } from "@/lib/types";
 import { relativeTime } from "@/lib/time";
 import { strings } from "@/lib/strings";
+import { SOURCES } from "@/lib/sources";
 
 export function ArticleCard({
   article,
@@ -17,6 +18,8 @@ export function ArticleCard({
 }) {
   const categoryLabel = CATEGORIES.find((c) => c.slug === article.category)?.label ?? "General";
   const isHero = variant === "hero";
+  const isStateAffiliated =
+    SOURCES.find((s) => s.id === article.sourceId)?.transparency === "state-affiliated";
 
   return (
     <a
@@ -83,6 +86,17 @@ export function ArticleCard({
             <>
               <span aria-hidden>·</span>
               <span>{strings.languageTag.am}</span>
+            </>
+          )}
+          {isStateAffiliated && (
+            <>
+              <span aria-hidden>·</span>
+              <span
+                className="rounded-full border border-border px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide"
+                title={strings.footer.transparencyDisclaimer}
+              >
+                {strings.transparency["state-affiliated"]}
+              </span>
             </>
           )}
         </div>
