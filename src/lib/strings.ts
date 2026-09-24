@@ -25,6 +25,9 @@ export const strings = {
     bannerPrefix: "Breaking",
     pill: "Breaking",
   },
+  cluster: {
+    coveredBy: (sourceCount: number) => `Covered by ${sourceCount} sources`,
+  },
   theme: {
     switchToDark: "Switch to dark mode",
     switchToLight: "Switch to light mode",
