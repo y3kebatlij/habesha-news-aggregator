@@ -1,3 +1,5 @@
+import type { Region } from "./types";
+
 // Ownership/affiliation classification, not a political left-right rating —
 // that would require case-by-case editorial analysis we can't responsibly
 // claim for every source. "state-affiliated" is used only where ownership or
@@ -7,8 +9,9 @@
 // flags.
 export type SourceTransparency = "state-affiliated" | "independent" | "unrated";
 
-// "ethiopia" sources publish an Ethiopia-specific (or Ethiopia-only) feed —
-// every article they publish is in scope. "africa-broad" sources publish a
+// "ethiopia" sources publish a dedicated feed (Ethiopia-focused, or a single
+// country/regional feed for the East Africa section) — every article they
+// publish is in scope, unfiltered. "africa-broad" sources publish a
 // pan-African or global feed; their articles are kept only when they mention
 // Ethiopia (see ethiopiaFilter.ts), since otherwise most of their output has
 // nothing to do with this site.
@@ -23,6 +26,7 @@ export type Source = {
   transparency: SourceTransparency;
   transparencyNote?: string;
   scope: SourceScope;
+  region: Region;
 };
 
 export const SOURCES: Source[] = [
@@ -35,6 +39,7 @@ export const SOURCES: Source[] = [
     transparency: "state-affiliated",
     transparencyNote: "Board and leadership are tied to Ethiopia's ruling Prosperity Party.",
     scope: "ethiopia",
+    region: "ethiopia",
   },
   {
     id: "capital",
@@ -45,6 +50,7 @@ export const SOURCES: Source[] = [
     transparency: "independent",
     transparencyNote: "Privately owned business weekly.",
     scope: "ethiopia",
+    region: "ethiopia",
   },
   {
     id: "addisfortune",
@@ -55,6 +61,7 @@ export const SOURCES: Source[] = [
     transparency: "independent",
     transparencyNote: "Privately owned business weekly.",
     scope: "ethiopia",
+    region: "ethiopia",
   },
   {
     id: "ethiopianmonitor",
@@ -64,6 +71,7 @@ export const SOURCES: Source[] = [
     language: "en",
     transparency: "unrated",
     scope: "ethiopia",
+    region: "ethiopia",
   },
   {
     id: "bbc-amharic",
@@ -74,6 +82,7 @@ export const SOURCES: Source[] = [
     transparency: "independent",
     transparencyNote: "Operated by BBC World Service, editorially independent of the Ethiopian government.",
     scope: "ethiopia",
+    region: "ethiopia",
   },
   {
     id: "shega",
@@ -84,6 +93,7 @@ export const SOURCES: Source[] = [
     transparency: "independent",
     transparencyNote: "Privately owned tech/business publication.",
     scope: "ethiopia",
+    region: "ethiopia",
   },
   {
     id: "allafrica-ethiopia",
@@ -94,6 +104,7 @@ export const SOURCES: Source[] = [
     transparency: "independent",
     transparencyNote: "Wire aggregator; underlying source mix varies by story.",
     scope: "ethiopia",
+    region: "ethiopia",
   },
   {
     id: "newbusinessethiopia",
@@ -103,6 +114,7 @@ export const SOURCES: Source[] = [
     language: "en",
     transparency: "unrated",
     scope: "ethiopia",
+    region: "ethiopia",
   },
   {
     id: "ethiopia-insight",
@@ -113,6 +125,7 @@ export const SOURCES: Source[] = [
     transparency: "independent",
     transparencyNote: "Independent, ad-free analysis platform.",
     scope: "ethiopia",
+    region: "ethiopia",
   },
   {
     id: "bbc-africa",
@@ -123,6 +136,7 @@ export const SOURCES: Source[] = [
     transparency: "independent",
     transparencyNote: "Operated by BBC World Service, editorially independent of the Ethiopian government.",
     scope: "africa-broad",
+    region: "ethiopia",
   },
   {
     id: "aljazeera",
@@ -133,6 +147,7 @@ export const SOURCES: Source[] = [
     transparency: "independent",
     transparencyNote: "Funded by the Qatari government but editorially independent of Ethiopia's government.",
     scope: "africa-broad",
+    region: "ethiopia",
   },
   {
     id: "africanews",
@@ -142,6 +157,7 @@ export const SOURCES: Source[] = [
     language: "en",
     transparency: "independent",
     scope: "africa-broad",
+    region: "ethiopia",
   },
   {
     id: "france24-africa",
@@ -152,5 +168,61 @@ export const SOURCES: Source[] = [
     transparency: "independent",
     transparencyNote: "Funded by the French government but editorially independent of Ethiopia's government.",
     scope: "africa-broad",
+    region: "ethiopia",
+  },
+  {
+    id: "allafrica-kenya",
+    name: "AllAfrica: Kenya",
+    feedUrl: "https://allafrica.com/tools/headlines/rdf/kenya/headlines.rdf",
+    siteUrl: "https://allafrica.com/kenya/",
+    language: "en",
+    transparency: "independent",
+    transparencyNote: "Wire aggregator; underlying source mix varies by story.",
+    scope: "ethiopia",
+    region: "east-africa",
+  },
+  {
+    id: "allafrica-somalia",
+    name: "AllAfrica: Somalia",
+    feedUrl: "https://allafrica.com/tools/headlines/rdf/somalia/headlines.rdf",
+    siteUrl: "https://allafrica.com/somalia/",
+    language: "en",
+    transparency: "independent",
+    transparencyNote: "Wire aggregator; underlying source mix varies by story.",
+    scope: "ethiopia",
+    region: "east-africa",
+  },
+  {
+    id: "allafrica-sudan",
+    name: "AllAfrica: Sudan",
+    feedUrl: "https://allafrica.com/tools/headlines/rdf/sudan/headlines.rdf",
+    siteUrl: "https://allafrica.com/sudan/",
+    language: "en",
+    transparency: "independent",
+    transparencyNote: "Wire aggregator; underlying source mix varies by story.",
+    scope: "ethiopia",
+    region: "east-africa",
+  },
+  {
+    id: "allafrica-eritrea",
+    name: "AllAfrica: Eritrea",
+    feedUrl: "https://allafrica.com/tools/headlines/rdf/eritrea/headlines.rdf",
+    siteUrl: "https://allafrica.com/eritrea/",
+    language: "en",
+    transparency: "independent",
+    transparencyNote: "Wire aggregator; underlying source mix varies by story.",
+    scope: "ethiopia",
+    region: "east-africa",
+  },
+  {
+    id: "allafrica-eastafrica",
+    name: "AllAfrica: East Africa",
+    feedUrl: "https://allafrica.com/tools/headlines/rdf/eastafrica/headlines.rdf",
+    siteUrl: "https://allafrica.com/eastafrica/",
+    language: "en",
+    transparency: "independent",
+    transparencyNote: "Wire aggregator; underlying source mix varies by story.",
+    scope: "ethiopia",
+    region: "east-africa",
   },
 ];

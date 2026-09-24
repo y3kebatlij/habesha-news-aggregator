@@ -4,7 +4,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { strings } from "@/lib/strings";
 import type { CategorySlug } from "@/lib/types";
 
-export function Header({ active }: { active: CategorySlug | "all" }) {
+export function Header({ active }: { active: CategorySlug | "all" | "east-africa" }) {
   return (
     <header className="border-b border-border bg-surface">
       <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-5 sm:px-6">

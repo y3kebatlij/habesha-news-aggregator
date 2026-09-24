@@ -7,6 +7,10 @@ export const strings = {
   tagline: "Ethiopian news, all in one place",
   nav: {
     all: "All",
+    eastAfrica: "East Africa",
+  },
+  eastAfrica: {
+    heading: "East Africa",
   },
   home: {
     heading: "Latest headlines",
