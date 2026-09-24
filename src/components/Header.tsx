@@ -5,10 +5,17 @@ import { SearchForm } from "./SearchForm";
 import { strings } from "@/lib/strings";
 import type { CategorySlug } from "@/lib/types";
 
-export function Header({ active }: { active: CategorySlug | "all" | "east-africa" }) {
+export function Header({
+  active,
+  query,
+}: {
+  // Omitted on pages that aren't a nav section (e.g. search), so no pill is highlighted.
+  active?: CategorySlug | "all" | "east-africa";
+  query?: string;
+}) {
   return (
     <header className="border-b border-border bg-surface">
-      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-5 sm:px-6">
+      <div className="mx-auto flex max-w-7xl 2xl:max-w-[1440px] flex-col gap-4 px-4 py-5 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-3">
           <Link href="/" className="flex items-center gap-3">
             <span className="flex h-9 w-2 overflow-hidden rounded-sm">
@@ -20,7 +27,7 @@ export function Header({ active }: { active: CategorySlug | "all" | "east-africa
             <span className="hidden text-sm text-muted sm:inline">{strings.tagline}</span>
           </Link>
           <div className="flex items-center gap-3">
-            <SearchForm />
+            <SearchForm defaultValue={query} />
             <ThemeToggle />
           </div>
         </div>

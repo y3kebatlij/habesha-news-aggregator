@@ -14,7 +14,7 @@ export default async function EastAfricaPage() {
   return (
     <>
       <Header active="east-africa" />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6">
+      <main className="mx-auto w-full max-w-7xl 2xl:max-w-[1440px] flex-1 px-4 py-6 sm:px-6 lg:px-8">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-2">
           <h1 className="text-lg font-semibold">{strings.eastAfrica.heading}</h1>
           <p className="text-xs text-muted">
