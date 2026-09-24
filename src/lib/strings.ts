@@ -7,6 +7,10 @@ export const strings = {
   tagline: "Ethiopian news, all in one place",
   nav: {
     all: "All",
+    eastAfrica: "East Africa",
+  },
+  eastAfrica: {
+    heading: "East Africa",
   },
   home: {
     heading: "Latest headlines",
@@ -21,12 +25,20 @@ export const strings = {
     bannerPrefix: "Breaking",
     pill: "Breaking",
   },
+  cluster: {
+    coveredBy: (sourceCount: number) => `Covered by ${sourceCount} sources`,
+  },
   theme: {
     switchToDark: "Switch to dark mode",
     switchToLight: "Switch to light mode",
   },
   languageTag: {
     am: "አማርኛ",
+  },
+  transparency: {
+    "state-affiliated": "State-affiliated",
+    independent: "Independent",
+    unrated: "Unrated",
   },
   search: {
     placeholder: "Search headlines…",
@@ -40,6 +52,8 @@ export const strings = {
       "Habesha News pulls headlines from Ethiopian and diaspora publishers into one place, ranked by what's happening now rather than a raw feed of everything.",
     disclaimer:
       "Headlines are pulled from each publisher's public RSS feed and link back to the original article. Habesha News does not host or modify the underlying reporting.",
+    transparencyDisclaimer:
+      "Source labels (\"State-affiliated\" / \"Independent\" / \"Unrated\") describe publicly documented ownership or leadership ties, not political leaning — they're our editorial classification, not a certification.",
     sourcesLabel: "Sources:",
   },
 } as const;

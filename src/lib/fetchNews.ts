@@ -1,6 +1,7 @@
 import Parser from "rss-parser";
 import { SOURCES } from "./sources";
 import { categorize } from "./categorize";
+import { mentionsEthiopia } from "./ethiopiaFilter";
 import type { Article } from "./types";
 
 type FeedItem = {
@@ -80,7 +81,7 @@ function hashId(link: string): string {
 async function fetchSourceArticles(source: (typeof SOURCES)[number]): Promise<Article[]> {
   const feed = await parser.parseURL(source.feedUrl);
 
-  return (feed.items ?? [])
+  const articles = (feed.items ?? [])
     .filter((item) => item.title && item.link)
     .map((item) => {
       const rawSnippet =
@@ -100,8 +101,15 @@ async function fetchSourceArticles(source: (typeof SOURCES)[number]): Promise<Ar
         sourceUrl: source.siteUrl,
         language: source.language,
         category: categorize(title, snippet),
+        region: source.region,
       } satisfies Article;
     });
+
+  if (source.scope === "africa-broad") {
+    return articles.filter((article) => mentionsEthiopia(`${article.title} ${article.snippet}`));
+  }
+
+  return articles;
 }
 
 async function fetchAllArticles(): Promise<Article[]> {
