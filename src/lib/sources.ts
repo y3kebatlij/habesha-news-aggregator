@@ -197,6 +197,19 @@ export const SOURCES: Source[] = [
     region: "ethiopia",
   },
   {
+    // Semafor has no per-vertical feed (its Africa page included) — the
+    // site-wide feed covers every desk, so this is Ethiopia-filtered too.
+    id: "semafor",
+    name: "Semafor",
+    feedUrl: "https://www.semafor.com/rss.xml",
+    siteUrl: "https://www.semafor.com/vertical/africa",
+    language: "en",
+    transparency: "independent",
+    transparencyNote: "Privately owned US news outlet.",
+    scope: "africa-broad",
+    region: "ethiopia",
+  },
+  {
     // ITWeb's Ethiopia location page has no feed of its own — its site-wide
     // feed is pan-African, so this is Ethiopia-filtered like the global sources.
     id: "itweb-africa",
