@@ -100,6 +100,21 @@ export const SOURCES: Source[] = [
     region: "ethiopia",
   },
   {
+    // Shega's weekly newsletter. Issue titles ("Issue 258: New Money, Old
+    // Ground") carry no keywords, so pin the category instead of leaving
+    // every issue in "General".
+    id: "shega-weekly",
+    name: "Shega Weekly",
+    feedUrl: "https://shegaweekly.substack.com/feed",
+    siteUrl: "https://shegaweekly.substack.com/",
+    language: "en",
+    transparency: "independent",
+    transparencyNote: "Newsletter of Shega, a privately owned tech/business publication.",
+    scope: "ethiopia",
+    region: "ethiopia",
+    category: "business",
+  },
+  {
     id: "allafrica-ethiopia",
     name: "AllAfrica: Ethiopia",
     feedUrl: "https://allafrica.com/tools/headlines/rdf/ethiopia/headlines.rdf",
