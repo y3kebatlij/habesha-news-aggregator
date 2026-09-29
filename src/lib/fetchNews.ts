@@ -1,7 +1,7 @@
 import Parser from "rss-parser";
 import { SOURCES } from "./sources";
 import { categorize } from "./categorize";
-import { mentionsEthiopia } from "./ethiopiaFilter";
+import { classifyBroadArticle } from "./ethiopiaFilter";
 import type { Article } from "./types";
 
 type FeedItem = {
@@ -118,7 +118,10 @@ async function fetchSourceArticles(source: (typeof SOURCES)[number]): Promise<Ar
     });
 
   if (source.scope === "africa-broad") {
-    return articles.filter((article) => mentionsEthiopia(`${article.title} ${article.snippet}`));
+    return articles.flatMap((article) => {
+      const region = classifyBroadArticle(article.title, article.snippet);
+      return region ? [{ ...article, region }] : [];
+    });
   }
 
   return articles;
