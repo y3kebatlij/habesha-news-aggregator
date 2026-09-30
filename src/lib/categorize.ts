@@ -2,7 +2,6 @@ import type { CategorySlug } from "./types";
 
 const KEYWORDS: Record<Exclude<CategorySlug, "general">, string[]> = {
   politics: [
-    "prime minister",
     "parliament",
     "election",
     "government",
@@ -24,6 +23,17 @@ const KEYWORDS: Record<Exclude<CategorySlug, "general">, string[]> = {
     "peace deal",
     "ceasefire",
     "conflict",
+    "war",
+    "rebel",
+    "military",
+    "alliance",
+    "coalition",
+    "army",
+    "armed",
+    "troops",
+    "fighting",
+    "drone",
+    "rsf",
   ],
   business: [
     "bank",
@@ -51,6 +61,18 @@ const KEYWORDS: Record<Exclude<CategorySlug, "general">, string[]> = {
     "customs",
     "insurance",
     "commodity exchange",
+    "world bank",
+    "imf",
+    "ida",
+    "investor",
+    "remittance",
+    "fuel",
+    "petroleum",
+    "energy",
+    "mining",
+    "mineral",
+    "nbe",
+    "national bank",
   ],
   sports: [
     "football",
@@ -93,11 +115,12 @@ const KEYWORDS: Record<Exclude<CategorySlug, "general">, string[]> = {
     "digital",
     "internet",
     "telecom",
-    "ethio telecom",
     "fintech",
     "software",
     "cybersecurity",
     "innovation",
+    "edtech",
+    "technologies",
   ],
   diaspora: [
     "diaspora",
@@ -105,11 +128,12 @@ const KEYWORDS: Record<Exclude<CategorySlug, "general">, string[]> = {
     "visa",
     "immigration",
     "abroad",
-    "community abroad",
     "expatriate",
   ],
 };
 
+// Tie-break only: when two categories score the same, the more specific one
+// (earlier here) wins.
 const ORDER: Exclude<CategorySlug, "general">[] = [
   "sports",
   "fashion",
@@ -119,15 +143,42 @@ const ORDER: Exclude<CategorySlug, "general">[] = [
   "politics",
 ];
 
-export function categorize(title: string, snippet: string): CategorySlug {
-  const text = ` ${title.toLowerCase()} ${snippet.toLowerCase()} `;
+// The headline says what a story is about; the snippet often mentions side
+// details (e.g. a loan story whose snippet lists "digital data" among other
+// bills), so a headline match counts for more.
+const TITLE_WEIGHT = 3;
+const SNIPPET_WEIGHT = 1;
 
+// Whole-word matches (plus simple plural/verb endings), so "match" doesn't
+// fire inside "dispatch" or "tech" inside "technical".
+const PATTERNS = Object.fromEntries(
+  ORDER.map((category) => [
+    category,
+    KEYWORDS[category].map((keyword) => {
+      const escaped = keyword.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return new RegExp(`\\b${escaped}(?:s|es|ing|ed)?\\b`);
+    }),
+  ])
+) as Record<Exclude<CategorySlug, "general">, RegExp[]>;
+
+export function categorize(title: string, snippet: string): CategorySlug {
+  const titleText = title.toLowerCase();
+  const snippetText = snippet.toLowerCase();
+
+  let best: CategorySlug = "general";
+  let bestScore = 0;
   for (const category of ORDER) {
-    const keywords = KEYWORDS[category];
-    if (keywords.some((keyword) => text.includes(keyword))) {
-      return category;
+    const score = PATTERNS[category].reduce((total, pattern) => {
+      if (pattern.test(titleText)) return total + TITLE_WEIGHT;
+      if (pattern.test(snippetText)) return total + SNIPPET_WEIGHT;
+      return total;
+    }, 0);
+    // Strictly greater, so ties keep the earlier (more specific) category.
+    if (score > bestScore) {
+      best = category;
+      bestScore = score;
     }
   }
 
-  return "general";
+  return best;
 }
