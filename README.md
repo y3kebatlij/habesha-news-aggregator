@@ -12,6 +12,17 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+### Optional API keys
+
+The site works with no keys. Set these (in `.env.local`, or Vercel →
+Project → Settings → Environment Variables) to switch on extra sources:
+
+- `WORLD_NEWS_API_KEY` — [World News API](https://worldnewsapi.com/) free
+  plan. Adds articles from Ethiopian publishers (`source-country=et`) and
+  "Ethiopian diaspora" coverage. Refreshed every 2 hours to stay inside the
+  free plan's 50 points/day; the footer backlink the plan requires appears
+  automatically.
+
 ## How it works
 
 - `src/lib/sources.ts` — the list of RSS feeds. Add a publisher by adding an
@@ -29,8 +40,8 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Current sources
 
 Fana Media Corporation, Capital Ethiopia, Addis Fortune, Ethiopian Monitor,
-BBC Amharic, Shega, AllAfrica (Ethiopia), New Business Ethiopia, and Ethiopia
-Insight. Addis Standard, The Reporter Ethiopia, Ezega News, VOA Amharic, and
+BBC Amharic, Shega, AllAfrica (Ethiopia), New Business Ethiopia, Ethiopia
+Insight, and Borkena (via its WordPress REST API, as its RSS feed is off). Addis Standard, The Reporter Ethiopia, Ezega News, VOA Amharic, and
 Zehabesha all publish feeds too, but block automated fetches (403s, Cloudflare
 challenge) — worth retrying later or swapping in a scraper if you want them
 included.

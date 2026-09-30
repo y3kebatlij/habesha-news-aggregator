@@ -32,6 +32,11 @@ export type Source = {
   // only understands English, so without this an Amharic sports headline
   // would land in "General".
   category?: CategorySlug;
+  // How `feedUrl` is parsed. Defaults to "rss". "wordpress" is for WordPress
+  // sites that have switched their RSS feed off but still serve the REST API.
+  format?: "rss" | "wordpress";
+  // Overrides the default fetch timeout for a source known to be slow.
+  timeoutMs?: number;
 };
 
 export const SOURCES: Source[] = [
@@ -114,6 +119,22 @@ export const SOURCES: Source[] = [
     scope: "ethiopia",
     region: "ethiopia",
     category: "business",
+  },
+  {
+    // Borkena's /feed/ redirects to the homepage, so read the WordPress REST
+    // API instead (og_image via Yoast gives each post its card image). Its
+    // uncached responses take 3-9s, hence the longer timeout.
+    id: "borkena",
+    name: "Borkena",
+    feedUrl:
+      "https://borkena.com/wp-json/wp/v2/posts?per_page=20&_fields=date_gmt,link,title,excerpt,yoast_head_json.og_image",
+    siteUrl: "https://borkena.com/",
+    language: "en",
+    transparency: "unrated",
+    scope: "ethiopia",
+    region: "ethiopia",
+    format: "wordpress",
+    timeoutMs: 20_000,
   },
   {
     id: "allafrica-ethiopia",
