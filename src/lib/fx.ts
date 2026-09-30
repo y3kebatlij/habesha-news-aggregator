@@ -2,12 +2,8 @@
 // Ethiopia), the parallel ("black") market rate, and an international
 // baseline. Every rate is expressed as birr per one unit of foreign currency.
 
-export const TRACKED_CURRENCIES = ["USD", "EUR", "GBP", "SAR", "AED", "CNY"] as const;
+export const TRACKED_CURRENCIES = ["USD", "EUR", "GBP"] as const;
 export type CurrencyCode = (typeof TRACKED_CURRENCIES)[number];
-
-export const HISTORY_DAYS = 90;
-
-export type DailyPoint = { date: string; official: number | null; parallel: number | null };
 
 export type CurrencyRow = {
   code: CurrencyCode;
@@ -19,7 +15,6 @@ export type CurrencyRow = {
 
 export type FxSnapshot = {
   rows: CurrencyRow[];
-  history: DailyPoint[];
   officialDate: string | null;
   parallelChangePct: number | null;
   baselineProvider: "openexchangerates" | "exchangerate-api" | null;
@@ -36,10 +31,9 @@ const PARALLEL_TTL_MS = 15 * 60 * 1000;
 
 // ---------- Official: Commercial Bank of Ethiopia ----------
 
-// CBE's public site is backed by this Strapi endpoint. The response repeats
-// currency metadata for every day (~18KB/day), which is why it's cached in
-// memory rather than Next's data cache (2MB-per-item limit).
-const CBE_URL = `https://combanketh.et/cbeapi/daily-exchange-rates/?_limit=${HISTORY_DAYS}&_sort=Date%3ADESC`;
+// CBE's public site is backed by this Strapi endpoint; this asks for just the
+// most recent day's table.
+const CBE_URL = "https://combanketh.et/cbeapi/daily-exchange-rates/?_limit=1&_sort=Date%3ADESC";
 
 type CbeDay = {
   Date: string;
@@ -51,24 +45,23 @@ type CbeDay = {
 };
 
 type OfficialRates = {
-  // Newest first.
-  days: { date: string; rates: Map<string, { buying: number; selling: number }> }[];
+  date: string;
+  rates: Map<string, { buying: number; selling: number }>;
 };
 
 async function fetchOfficial(): Promise<OfficialRates> {
-  const days = (await getJson(CBE_URL)) as CbeDay[];
+  const [day] = (await getJson(CBE_URL)) as CbeDay[];
+  if (!day) throw new Error("CBE returned no exchange-rate table");
   return {
-    days: days.map((day) => ({
-      date: day.Date,
-      rates: new Map(
-        day.ExchangeRate.filter((rate) => rate.transactionalBuying && rate.transactionalSelling).map(
-          (rate) => [
-            rate.currency.CurrencyCode,
-            { buying: rate.transactionalBuying!, selling: rate.transactionalSelling! },
-          ]
-        )
-      ),
-    })),
+    date: day.Date,
+    rates: new Map(
+      day.ExchangeRate.filter((rate) => rate.transactionalBuying && rate.transactionalSelling).map(
+        (rate) => [
+          rate.currency.CurrencyCode,
+          { buying: rate.transactionalBuying!, selling: rate.transactionalSelling! },
+        ]
+      )
+    ),
   };
 }
 
@@ -82,29 +75,19 @@ const PARALLEL_URL = "https://ethioblackmarket.com/api/latest-prices?period=dail
 type ParallelResponse = {
   dailyPercentage?: number;
   allLastprice?: Record<string, number>;
-  historicalPrices?: { time: number; value: Record<string, number> }[];
 };
 
 type ParallelRates = {
   latest: Record<string, number>;
   changePct: number | null;
-  daily: Map<string, number>; // date -> USD rate
 };
 
 async function fetchParallel(): Promise<ParallelRates> {
   const data = (await getJson(PARALLEL_URL)) as ParallelResponse;
   if (!data.allLastprice?.USD) throw new Error("Parallel rate response missing USD");
-  const daily = new Map<string, number>();
-  for (const point of data.historicalPrices ?? []) {
-    if (point.value.USD) daily.set(isoDate(point.time * 1000), point.value.USD);
-  }
-  // Today's daily bucket is an aggregate so far; show the live rate instead so
-  // the chart's end matches the headline figure.
-  daily.set(isoDate(Date.now()), data.allLastprice.USD);
   return {
     latest: data.allLastprice,
     changePct: data.dailyPercentage ?? null,
-    daily,
   };
 }
 
@@ -149,10 +132,6 @@ async function getJson(url: string): Promise<unknown> {
   return response.json();
 }
 
-function isoDate(ms: number): string {
-  return new Date(ms).toISOString().slice(0, 10);
-}
-
 // A tiny TTL cache that keeps serving the last good value if a refresh fails,
 // the same approach fetchNews.ts uses for feeds.
 function cached<T>(ttlMs: number, load: () => Promise<T>): () => Promise<T | null> {
@@ -185,37 +164,6 @@ const getBaseline = async () => {
   }
 };
 
-function mid(rate: { buying: number; selling: number } | undefined): number | null {
-  return rate ? (rate.buying + rate.selling) / 2 : null;
-}
-
-// USD history over the last HISTORY_DAYS calendar days. CBE doesn't publish
-// on Sundays/holidays, so the official rate carries forward over the gap —
-// the rate in effect that day.
-function buildHistory(official: OfficialRates | null, parallel: ParallelRates | null): DailyPoint[] {
-  const officialByDate = new Map(
-    (official?.days ?? []).map((day) => [day.date, mid(day.rates.get("USD"))])
-  );
-  const oldestOfficial = official?.days.at(-1)?.date;
-  const points: DailyPoint[] = [];
-  let lastOfficial: number | null = null;
-  const today = Date.now();
-  for (let offset = HISTORY_DAYS - 1; offset >= 0; offset--) {
-    const date = isoDate(today - offset * 24 * 60 * 60 * 1000);
-    const todaysOfficial = officialByDate.get(date);
-    if (todaysOfficial != null) lastOfficial = todaysOfficial;
-    const hasOfficialCoverage = oldestOfficial !== undefined && date >= oldestOfficial;
-    points.push({
-      date,
-      official: hasOfficialCoverage ? lastOfficial : null,
-      parallel: parallel?.daily.get(date) ?? null,
-    });
-  }
-  // Drop leading days with no data at all.
-  const firstWithData = points.findIndex((point) => point.official !== null || point.parallel !== null);
-  return firstWithData === -1 ? [] : points.slice(firstWithData);
-}
-
 export async function getFxSnapshot(): Promise<FxSnapshot> {
   const [official, parallel, baseline] = await Promise.all([
     getOfficial(),
@@ -223,9 +171,8 @@ export async function getFxSnapshot(): Promise<FxSnapshot> {
     getBaseline(),
   ]);
 
-  const latestOfficial = official?.days[0];
   const rows = TRACKED_CURRENCIES.map((code) => {
-    const officialRate = latestOfficial?.rates.get(code);
+    const officialRate = official?.rates.get(code);
     const perUsd = baseline?.perUsd[code];
     return {
       code,
@@ -243,8 +190,7 @@ export async function getFxSnapshot(): Promise<FxSnapshot> {
 
   return {
     rows,
-    history: buildHistory(official, parallel),
-    officialDate: latestOfficial?.date ?? null,
+    officialDate: official?.date ?? null,
     parallelChangePct: parallel?.changePct ?? null,
     baselineProvider: baseline?.provider ?? null,
     fetchedAt: Date.now(),

@@ -45,8 +45,8 @@ export default async function CategoryPage({
           </p>
         </div>
         {slug === "business" && (
-          // Streams in separately: CBE's rate history can take several
-          // seconds, and the headlines shouldn't wait for it.
+          // Streams in separately so the headlines don't wait on the
+          // exchange-rate sources.
           <Suspense
             fallback={<div className="mb-8 h-96 animate-pulse rounded-xl border border-border bg-surface" />}
           >

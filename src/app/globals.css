@@ -11,10 +11,6 @@
   --brand-green: #078930;
   --brand-yellow: #f4c430;
   --brand-red: #da121a;
-  /* Exchange-rate chart series; validated colorblind-safe as a pair on
-     both surfaces (dataviz reference palette slots 1-2). */
-  --series-official: #2a78d6;
-  --series-parallel: #eb6834;
 }
 
 @theme inline {
@@ -26,8 +22,6 @@
   --color-brand-green: var(--brand-green);
   --color-brand-yellow: var(--brand-yellow);
   --color-brand-red: var(--brand-red);
-  --color-series-official: var(--series-official);
-  --color-series-parallel: var(--series-parallel);
   --font-sans: var(--font-geist-sans), var(--font-noto-ethiopic), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
 }
@@ -38,8 +32,6 @@
   --surface: #171614;
   --border: #2a2926;
   --muted: #9a9691;
-  --series-official: #3987e5;
-  --series-parallel: #d95926;
 }
 
 body {
