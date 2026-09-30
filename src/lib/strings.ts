@@ -47,6 +47,38 @@ export const strings = {
     prompt: "Enter a search term to find headlines.",
     resultsHeading: (query: string) => `Results for "${query}"`,
   },
+  fx: {
+    heading: "Birr exchange rates",
+    subheading: "Official bank rate vs. the parallel market, birr per unit of foreign currency.",
+    officialLabel: "Official (CBE)",
+    parallelLabel: "Parallel market",
+    premiumLabel: "Parallel premium",
+    premiumNote: "above the official mid rate",
+    baselineLabel: "International baseline",
+    buy: "Buy",
+    sell: "Sell",
+    mid: "Mid",
+    today: "today",
+    asOf: (date: string) => `as of ${date}`,
+    chartTitle: (days: number) => `US dollar, last ${days} days`,
+    chartLabel: "Line chart of the official and parallel-market birr per US dollar rates",
+    showTable: "Show data table",
+    date: "Date",
+    currency: "Currency",
+    gap: "Gap",
+    unavailable: "—",
+    failed: {
+      official: "Official CBE rates are unavailable right now.",
+      parallel: "Parallel-market rates are unavailable right now.",
+      baseline: "The international baseline is unavailable right now.",
+    },
+    sourcesNote:
+      "Official rates: Commercial Bank of Ethiopia daily exchange table. Parallel market: EthioBlackMarket, which tracks Binance P2P USDT/ETB trades — an indicator, not a quote you can trade at. The parallel market operates outside Ethiopia's legal foreign-exchange system.",
+    baselineCredit: {
+      openexchangerates: { name: "Open Exchange Rates", url: "https://openexchangerates.org/" },
+      "exchangerate-api": { name: "Rates By Exchange Rate API", url: "https://www.exchangerate-api.com" },
+    },
+  },
   footer: {
     about:
       "Habesha News pulls headlines from Ethiopian and diaspora publishers into one place, ranked by what's happening now rather than a raw feed of everything.",

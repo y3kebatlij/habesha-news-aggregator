@@ -22,6 +22,13 @@ Project → Settings → Environment Variables) to switch on extra sources:
   "Ethiopian diaspora" coverage. Refreshed every 2 hours to stay inside the
   free plan's 50 points/day; the footer backlink the plan requires appears
   automatically.
+- `OPENEXCHANGERATES_APP_ID` — [Open Exchange Rates](https://openexchangerates.org/)
+  free plan, used as the international baseline in the Business & Economy
+  exchange-rate tracker (hourly updates, ~720 of the 1,000 monthly requests).
+  Without it the tracker falls back to ExchangeRate-API's keyless daily rates.
+
+The exchange-rate tracker's official rates (Commercial Bank of Ethiopia) and
+parallel-market rates (EthioBlackMarket) need no keys.
 
 ## How it works
 

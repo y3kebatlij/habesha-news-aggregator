@@ -1,7 +1,9 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { LoadMoreGrid } from "@/components/LoadMoreGrid";
+import { FxTracker } from "@/components/FxTracker";
 import { getArticles } from "@/lib/fetchNews";
 import { CATEGORIES, type CategorySlug } from "@/lib/types";
 import { relativeTime } from "@/lib/time";
@@ -42,6 +44,15 @@ export default async function CategoryPage({
             {stale && ` · ${strings.home.staleNote}`}
           </p>
         </div>
+        {slug === "business" && (
+          // Streams in separately: CBE's rate history can take several
+          // seconds, and the headlines shouldn't wait for it.
+          <Suspense
+            fallback={<div className="mb-8 h-96 animate-pulse rounded-xl border border-border bg-surface" />}
+          >
+            <FxTracker />
+          </Suspense>
+        )}
         <LoadMoreGrid articles={filtered} />
       </main>
       <Footer />
