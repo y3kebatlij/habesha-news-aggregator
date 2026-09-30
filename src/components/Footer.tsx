@@ -1,7 +1,14 @@
 import { SOURCES } from "@/lib/sources";
 import { strings } from "@/lib/strings";
+import { isWorldNewsEnabled } from "@/lib/worldNews";
 
 export function Footer() {
+  const links = SOURCES.map((source) => ({ id: source.id, name: source.name, url: source.siteUrl }));
+  // The World News API free plan requires this backlink.
+  if (isWorldNewsEnabled()) {
+    links.push({ id: "worldnewsapi", name: "World News API", url: "https://worldnewsapi.com/" });
+  }
+
   return (
     <footer className="mt-auto border-t border-border bg-surface">
       <div className="mx-auto max-w-7xl 2xl:max-w-[1440px] px-4 py-8 text-sm text-muted sm:px-6 lg:px-8">
@@ -10,17 +17,17 @@ export function Footer() {
         <p className="mt-3">{strings.footer.transparencyDisclaimer}</p>
         <p className="mt-3">
           {strings.footer.sourcesLabel}{" "}
-          {SOURCES.map((source, index) => (
-            <span key={source.id}>
+          {links.map((link, index) => (
+            <span key={link.id}>
               <a
-                href={source.siteUrl}
+                href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline decoration-border underline-offset-2 hover:text-brand-green"
               >
-                {source.name}
+                {link.name}
               </a>
-              {index < SOURCES.length - 1 ? ", " : ""}
+              {index < links.length - 1 ? ", " : ""}
             </span>
           ))}
         </p>

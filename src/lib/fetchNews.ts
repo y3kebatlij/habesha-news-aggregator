@@ -1,7 +1,9 @@
 import Parser from "rss-parser";
 import { SOURCES } from "./sources";
 import { categorize } from "./categorize";
+import { hashId, truncate } from "./text";
 import { classifyBroadArticle } from "./ethiopiaFilter";
+import { fetchWorldNewsArticles } from "./worldNews";
 import type { Article } from "./types";
 
 type FeedItem = {
@@ -18,7 +20,9 @@ type FeedItem = {
 };
 
 const FETCH_TIMEOUT_MS = 10_000;
-const USER_AGENT = "Mozilla/5.0 (compatible; HabeshaNewsAggregator/1.0; +https://localhost)";
+// Plain, honest bot UA. Some WAFs (e.g. Borkena's) block the
+// "Mozilla/5.0 (compatible; ...)" crawler pattern but allow this.
+const USER_AGENT = "HabeshaNewsAggregator/1.0 (+https://habesha-news-aggregator.vercel.app)";
 
 // Feeds are downloaded with fetch() rather than rss-parser's parseURL():
 // some servers (e.g. Capital Ethiopia) gzip the response even when not asked
@@ -43,20 +47,39 @@ const MAX_ARTICLE_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 let cache: { articles: Article[]; fetchedAt: number } | null = null;
 let inFlight: Promise<Article[]> | null = null;
 
-function stripHtml(html: string): string {
-  return html
-    .replace(/<[^>]*>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&#8217;/g, "'")
-    .replace(/&#8220;|&#8221;/g, '"')
-    .replace(/\s+/g, " ")
-    .trim();
+const NAMED_ENTITIES: Record<string, string> = {
+  nbsp: " ",
+  amp: "&",
+  quot: '"',
+  apos: "'",
+  lt: "<",
+  gt: ">",
+  hellip: "…",
+  ndash: "–",
+  mdash: "—",
+  lsquo: "‘",
+  rsquo: "’",
+  ldquo: "“",
+  rdquo: "”",
+};
+
+function decodeEntities(text: string): string {
+  return text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, entity: string) => {
+    if (entity[0] === "#") {
+      const code =
+        entity[1] === "x" || entity[1] === "X"
+          ? parseInt(entity.slice(2), 16)
+          : parseInt(entity.slice(1), 10);
+      return Number.isNaN(code) ? match : String.fromCodePoint(code);
+    }
+    return NAMED_ENTITIES[entity.toLowerCase()] ?? match;
+  });
 }
 
-function truncate(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text;
-  return `${text.slice(0, maxLength).trimEnd()}…`;
+function stripHtml(html: string): string {
+  return decodeEntities(html.replace(/<[^>]*>/g, " "))
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function extractImage(item: FeedItem): string | null {
@@ -76,46 +99,80 @@ function extractImage(item: FeedItem): string | null {
   return match ? match[1] : null;
 }
 
-function hashId(link: string): string {
-  let hash = 0;
-  for (let i = 0; i < link.length; i++) {
-    hash = (hash * 31 + link.charCodeAt(i)) | 0;
-  }
-  return Math.abs(hash).toString(36);
+// The fields every feed format is reduced to before becoming an Article.
+type RawItem = {
+  title: string;
+  link: string;
+  snippet: string;
+  image: string | null;
+  pubDate: string | null;
+};
+
+// WordPress REST API post, trimmed to the `_fields` requested in sources.ts.
+type WordPressPost = {
+  link?: string;
+  date_gmt?: string;
+  title?: { rendered?: string };
+  excerpt?: { rendered?: string };
+  yoast_head_json?: { og_image?: { url?: string }[] };
+};
+
+function parseWordPress(body: string): RawItem[] {
+  const posts = JSON.parse(body) as WordPressPost[];
+  return posts
+    .filter((post) => post.title?.rendered && post.link)
+    .map((post) => ({
+      title: stripHtml(post.title!.rendered!),
+      link: post.link!,
+      snippet: stripHtml(post.excerpt?.rendered ?? ""),
+      image: post.yoast_head_json?.og_image?.[0]?.url ?? null,
+      // date_gmt carries no zone suffix; without "Z" it would parse as local time.
+      pubDate: post.date_gmt ? `${post.date_gmt}Z` : null,
+    }));
+}
+
+async function parseRss(body: string): Promise<RawItem[]> {
+  const feed = await parser.parseString(body);
+  return (feed.items ?? [])
+    .filter((item) => item.title && item.link)
+    .map((item) => ({
+      title: decodeEntities(item.title!.trim()),
+      link: item.link!,
+      snippet: stripHtml(
+        item.contentSnippet ?? stripHtml(item["content:encoded"] ?? item.content ?? "")
+      ),
+      image: extractImage(item),
+      pubDate: item.isoDate ?? item.pubDate ?? null,
+    }));
 }
 
 async function fetchSourceArticles(source: (typeof SOURCES)[number]): Promise<Article[]> {
   const response = await fetch(source.feedUrl, {
     headers: { "User-Agent": USER_AGENT },
-    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+    signal: AbortSignal.timeout(source.timeoutMs ?? FETCH_TIMEOUT_MS),
     cache: "no-store",
   });
   if (!response.ok) throw new Error(`HTTP ${response.status} from ${source.feedUrl}`);
-  const feed = await parser.parseString(await response.text());
+  const body = await response.text();
+  const items = source.format === "wordpress" ? parseWordPress(body) : await parseRss(body);
 
-  const articles = (feed.items ?? [])
-    .filter((item) => item.title && item.link)
-    .map((item) => {
-      const rawSnippet =
-        item.contentSnippet ?? stripHtml(item["content:encoded"] ?? item.content ?? "");
-      const snippet = truncate(stripHtml(rawSnippet), 220);
-      const title = item.title!.trim();
-
-      return {
-        id: hashId(item.link!),
-        title,
-        link: item.link!,
-        snippet,
-        image: extractImage(item),
-        pubDate: item.isoDate ?? item.pubDate ?? null,
-        sourceId: source.id,
-        sourceName: source.name,
-        sourceUrl: source.siteUrl,
-        language: source.language,
-        category: source.category ?? categorize(title, snippet),
-        region: source.region,
-      } satisfies Article;
-    });
+  const articles = items.map((item) => {
+    const snippet = truncate(item.snippet, 220);
+    return {
+      id: hashId(item.link),
+      title: item.title,
+      link: item.link,
+      snippet,
+      image: item.image,
+      pubDate: item.pubDate,
+      sourceId: source.id,
+      sourceName: source.name,
+      sourceUrl: source.siteUrl,
+      language: source.language,
+      category: source.category ?? categorize(item.title, snippet),
+      region: source.region,
+    } satisfies Article;
+  });
 
   if (source.scope === "africa-broad") {
     return articles.flatMap((article) => {
@@ -128,14 +185,25 @@ async function fetchSourceArticles(source: (typeof SOURCES)[number]): Promise<Ar
 }
 
 async function fetchAllArticles(): Promise<Article[]> {
-  const results = await Promise.allSettled(SOURCES.map(fetchSourceArticles));
+  const [results, apiArticles] = await Promise.all([
+    Promise.allSettled(SOURCES.map(fetchSourceArticles)),
+    fetchWorldNewsArticles(),
+  ]);
 
   const cutoff = Date.now() - MAX_ARTICLE_AGE_MS;
+  const seenIds = new Set<string>();
   const articles = results
     .flatMap((result, index) => {
       if (result.status === "fulfilled") return result.value;
       console.error(`Failed to fetch feed for ${SOURCES[index].name}:`, result.reason);
       return [];
+    })
+    .concat(apiArticles)
+    .filter((article) => {
+      // Two API queries (or a feed and the API) can return the same link.
+      if (seenIds.has(article.id)) return false;
+      seenIds.add(article.id);
+      return true;
     })
     .filter((article) => {
       const published = article.pubDate ? new Date(article.pubDate).getTime() : NaN;

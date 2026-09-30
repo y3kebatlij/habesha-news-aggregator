@@ -51,7 +51,7 @@ export const strings = {
     about:
       "Habesha News pulls headlines from Ethiopian and diaspora publishers into one place, ranked by what's happening now rather than a raw feed of everything.",
     disclaimer:
-      "Headlines are pulled from each publisher's public RSS feed and link back to the original article. Habesha News does not host or modify the underlying reporting.",
+      "Headlines are pulled from each publisher's public feed (or a news API) and link back to the original article. Habesha News does not host or modify the underlying reporting.",
     transparencyDisclaimer:
       "Source labels (\"State-affiliated\" / \"Independent\" / \"Unrated\") describe publicly documented ownership or leadership ties, not political leaning — they're our editorial classification, not a certification.",
     sourcesLabel: "Sources:",
