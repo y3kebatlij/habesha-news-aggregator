@@ -12,9 +12,10 @@ export type SourceTransparency = "state-affiliated" | "independent" | "unrated";
 // "ethiopia" sources publish a dedicated feed (Ethiopia-focused, or a single
 // country/regional feed for the East Africa section) — every article they
 // publish is in scope, unfiltered. "africa-broad" sources publish a
-// pan-African or global feed; their articles are kept only when they mention
-// Ethiopia (see ethiopiaFilter.ts), since otherwise most of their output has
-// nothing to do with this site.
+// pan-African or global feed; each article is routed by its content instead
+// of the source's `region` — Ethiopia stories to the homepage, stories headlined
+// about a neighbouring country to East Africa, the rest dropped (see
+// ethiopiaFilter.ts).
 export type SourceScope = "ethiopia" | "africa-broad";
 
 export type Source = {
