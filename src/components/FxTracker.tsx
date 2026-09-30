@@ -1,5 +1,4 @@
-import { FxChart } from "./FxChart";
-import { getFxSnapshot, officialMid, parallelPremiumPct, HISTORY_DAYS, type CurrencyRow } from "@/lib/fx";
+import { getFxSnapshot, officialMid, parallelPremiumPct, type CurrencyRow } from "@/lib/fx";
 import { relativeTime } from "@/lib/time";
 import { strings } from "@/lib/strings";
 
@@ -25,21 +24,14 @@ function StatTile({
   label,
   value,
   detail,
-  seriesColor,
 }: {
   label: string;
   value: string;
   detail: string;
-  seriesColor?: string;
 }) {
   return (
     <div className="min-w-0 rounded-lg border border-border p-3">
-      <p className="flex items-center gap-1.5 text-xs text-muted">
-        {seriesColor && (
-          <span aria-hidden className="h-0.5 w-3 rounded-full" style={{ background: seriesColor }} />
-        )}
-        {label}
-      </p>
+      <p className="text-xs text-muted">{label}</p>
       <p className="mt-1 text-2xl font-semibold tabular-nums text-foreground">{value}</p>
       <p className="mt-0.5 text-xs text-muted">{detail}</p>
     </div>
@@ -83,13 +75,11 @@ export async function FxTracker() {
           detail={`${strings.fx.buy} ${rate(usd.officialBuying)} · ${strings.fx.sell} ${rate(usd.officialSelling)}${
             snapshot.officialDate ? ` · ${formatDay(snapshot.officialDate)}` : ""
           }`}
-          seriesColor="var(--series-official)"
         />
         <StatTile
           label={`${strings.fx.parallelLabel} · USD`}
           value={rate(usd.parallel)}
           detail={`${percent(snapshot.parallelChangePct)} ${strings.fx.today}`}
-          seriesColor="var(--series-parallel)"
         />
         <StatTile
           label={strings.fx.premiumLabel}
@@ -102,13 +92,6 @@ export async function FxTracker() {
           detail={credit?.name ?? strings.fx.unavailable}
         />
       </div>
-
-      {snapshot.history.length > 1 && (
-        <div className="mt-6">
-          <h3 className="mb-1 text-sm font-medium">{strings.fx.chartTitle(HISTORY_DAYS)}</h3>
-          <FxChart history={snapshot.history} />
-        </div>
-      )}
 
       <div className="mt-6 overflow-x-auto">
         <table className="w-full min-w-[520px] text-left text-sm tabular-nums">
