@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Noto_Sans_Ethiopic } from "next/font/google";
 import Script from "next/script";
+import { WhatsNew } from "@/components/WhatsNew";
 import "./globals.css";
 
 const THEME_INIT_SCRIPT = `
@@ -50,7 +51,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {THEME_INIT_SCRIPT}
         </Script>
       </head>
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        {children}
+        <WhatsNew />
+      </body>
     </html>
   );
 }

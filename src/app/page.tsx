@@ -3,6 +3,7 @@ import { Footer } from "@/components/Footer";
 import { BreakingBanner } from "@/components/BreakingBanner";
 import { ArticleCard } from "@/components/ArticleCard";
 import { LoadMoreGrid } from "@/components/LoadMoreGrid";
+import { AddisNow } from "@/components/AddisNow";
 import { getArticles } from "@/lib/fetchNews";
 import { rankArticles, isBreakingArticle } from "@/lib/rank";
 import { relativeTime } from "@/lib/time";
@@ -25,7 +26,10 @@ export default async function HomePage() {
       <Header active="all" />
       <main className="mx-auto w-full max-w-7xl 2xl:max-w-[1440px] flex-1 px-4 py-6 sm:px-6 lg:px-8">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-2">
-          <h1 className="text-lg font-semibold">{strings.home.heading}</h1>
+          <div>
+            <h1 className="text-lg font-semibold">{strings.home.heading}</h1>
+            <AddisNow />
+          </div>
           <p className="text-xs text-muted">
             {strings.home.updatedPrefix} {relativeTime(new Date(fetchedAt).toISOString())}
             {stale && ` · ${strings.home.staleNote}`}

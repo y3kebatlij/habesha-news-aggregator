@@ -31,6 +31,18 @@ export function Footer() {
             </span>
           ))}
         </p>
+        {/* Open-Meteo's CC BY 4.0 licence requires this credit. */}
+        <p className="mt-3">
+          {strings.footer.weatherCredit.prefix}{" "}
+          <a
+            href={strings.footer.weatherCredit.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline decoration-border underline-offset-2 hover:text-brand-green"
+          >
+            {strings.footer.weatherCredit.name}
+          </a>
+        </p>
       </div>
     </footer>
   );

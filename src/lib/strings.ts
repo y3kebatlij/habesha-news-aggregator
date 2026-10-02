@@ -17,6 +17,23 @@ export const strings = {
     updatedPrefix: "Updated",
     staleNote: "showing cached results, a source may be unreachable",
   },
+  addisNow: {
+    city: "Addis Ababa",
+    conditions: {
+      clear: "Clear",
+      cloudy: "Cloudy",
+      fog: "Fog",
+      drizzle: "Drizzle",
+      rain: "Rain",
+      snow: "Snow",
+      storm: "Thunderstorm",
+    },
+  },
+  whatsNew: {
+    heading: "What's new on Habesha News",
+    dismiss: "Got it",
+    close: "Close",
+  },
   grid: {
     empty: "No articles found right now. Check back soon.",
     loadMore: "Load more",
@@ -81,5 +98,6 @@ export const strings = {
     transparencyDisclaimer:
       "Source labels (\"State-affiliated\" / \"Independent\" / \"Unrated\") describe publicly documented ownership or leadership ties, not political leaning — they're our editorial classification, not a certification.",
     sourcesLabel: "Sources:",
+    weatherCredit: { prefix: "Weather data by", name: "Open-Meteo.com", url: "https://open-meteo.com/" },
   },
 } as const;
