@@ -28,9 +28,8 @@ export type Source = {
   transparencyNote?: string;
   scope: SourceScope;
   region: Region;
-  // Set for single-topic sources (e.g. a sports site). Keyword categorizing
-  // only understands English, so without this an Amharic sports headline
-  // would land in "General".
+  // Set for single-topic sources (e.g. a sports site), whose headlines often
+  // name a team or athlete without any category keyword.
   category?: CategorySlug;
   // How `feedUrl` is parsed. Defaults to "rss". "wordpress" is for WordPress
   // sites that have switched their RSS feed off but still serve the REST API.

@@ -47,6 +47,12 @@ const MAX_ARTICLE_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 let cache: { articles: Article[]; fetchedAt: number } | null = null;
 let inFlight: Promise<Article[]> | null = null;
 
+// Each source's articles from its last successful fetch. When one source fails
+// (a timeout, a 5xx, a WAF hiccup), its previous articles are served instead,
+// so it doesn't vanish from the site until its next good fetch. In-memory like
+// `cache`, so it only helps a server instance that has fetched before.
+const lastGoodBySource = new Map<string, Article[]>();
+
 const NAMED_ENTITIES: Record<string, string> = {
   nbsp: " ",
   amp: "&",
@@ -194,9 +200,17 @@ async function fetchAllArticles(): Promise<Article[]> {
   const seenIds = new Set<string>();
   const articles = results
     .flatMap((result, index) => {
-      if (result.status === "fulfilled") return result.value;
-      console.error(`Failed to fetch feed for ${SOURCES[index].name}:`, result.reason);
-      return [];
+      const source = SOURCES[index];
+      if (result.status === "fulfilled") {
+        lastGoodBySource.set(source.id, result.value);
+        return result.value;
+      }
+      const fallback = lastGoodBySource.get(source.id) ?? [];
+      console.error(
+        `Failed to fetch feed for ${source.name}, serving ${fallback.length} previous articles:`,
+        result.reason
+      );
+      return fallback;
     })
     .concat(apiArticles)
     .filter((article) => {
