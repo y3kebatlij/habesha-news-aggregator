@@ -56,6 +56,10 @@ Zehabesha all publish feeds too, but block automated fetches (403s, Cloudflare
 challenge) — worth retrying later or swapping in a scraper if you want them
 included.
 
+Sports: HatrikSport, Soccer Ethiopia, Athletics Africa (Ethiopia), Fana's
+sport section, and The Reporter's sport sections in English and Amharic
+(the English site's own feed works again as of 2026-10-26).
+
 ## Known limitations / next steps
 
 - Categorization is keyword-based on English text, so Amharic-language
