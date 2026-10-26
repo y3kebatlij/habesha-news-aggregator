@@ -31,14 +31,16 @@ export type Article = {
 export type Category = {
   slug: CategorySlug;
   label: string;
+  // Shorter name for the category nav, so more sections fit on a phone screen.
+  navLabel: string;
 };
 
 export const CATEGORIES: Category[] = [
-  { slug: "politics", label: "Politics" },
-  { slug: "business", label: "Business & Economy" },
-  { slug: "sports", label: "Sports" },
-  { slug: "fashion", label: "Fashion & Lifestyle" },
-  { slug: "technology", label: "Technology" },
-  { slug: "diaspora", label: "Diaspora & World" },
-  { slug: "general", label: "General" },
+  { slug: "politics", label: "Politics", navLabel: "Politics" },
+  { slug: "business", label: "Business & Economy", navLabel: "Business" },
+  { slug: "sports", label: "Sports", navLabel: "Sports" },
+  { slug: "fashion", label: "Fashion & Lifestyle", navLabel: "Lifestyle" },
+  { slug: "technology", label: "Technology", navLabel: "Tech" },
+  { slug: "diaspora", label: "Diaspora & World", navLabel: "Diaspora" },
+  { slug: "general", label: "General", navLabel: "General" },
 ];

@@ -11,6 +11,14 @@ export type ChangelogEntry = {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    id: "2026-10-26c",
+    title: "Easier section menu on phones",
+    items: [
+      "Section names are shorter, so more of them fit on screen, and a fade at the edge shows when there are more to swipe to.",
+      "The section you're reading is now always visible in the menu.",
+    ],
+  },
+  {
     id: "2026-10-26b",
     title: "More Ethiopian sport",
     items: [

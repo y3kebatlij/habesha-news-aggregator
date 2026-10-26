@@ -133,6 +133,10 @@ In scope for v1:
   as an eyebrow label on cards, still reachable via `/category/general` and
   the homepage) — just not a nav item.
 - **Mobile nav** stays horizontally-scrolling tabs, not a hamburger menu.
+  Edge fades show when more sections are off-screen, the current section's
+  pill is scrolled into view, and the pills use short `navLabel`s
+  ("Business", "Lifestyle", "Tech", "Diaspora"); page headings and card
+  labels keep the full names.
 - **Load more** button (not infinite scroll, not full pagination) below the
   homepage grid and on category pages.
 - **Language tag**: Amharic-language cards (`article.language === "am"`)
