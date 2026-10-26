@@ -40,6 +40,20 @@ export type Source = {
 
 export const SOURCES: Source[] = [
   {
+    // Fana's sport section. Some stories are also in its main feed; listed
+    // first so the copy kept by the duplicate-link check is the one in Sports.
+    id: "fana-sport",
+    name: "Fana Media Corporation",
+    feedUrl: "https://www.fanamc.com/english/category/sport/feed/",
+    siteUrl: "https://www.fanamc.com/english/category/sport/",
+    language: "en",
+    transparency: "state-affiliated",
+    transparencyNote: "Board and leadership are tied to Ethiopia's ruling Prosperity Party.",
+    scope: "ethiopia",
+    region: "ethiopia",
+    category: "sports",
+  },
+  {
     id: "fana",
     name: "Fana Media Corporation",
     feedUrl: "https://www.fanamc.com/english/feed/",
@@ -185,6 +199,44 @@ export const SOURCES: Source[] = [
     siteUrl: "https://www.hatricksport.net/",
     language: "am",
     transparency: "unrated",
+    scope: "ethiopia",
+    region: "ethiopia",
+    category: "sports",
+  },
+  {
+    id: "soccer-ethiopia",
+    name: "Soccer Ethiopia",
+    feedUrl: "https://soccerethiopia.net/feed/",
+    siteUrl: "https://soccerethiopia.net/",
+    language: "am",
+    transparency: "unrated",
+    scope: "ethiopia",
+    region: "ethiopia",
+    category: "sports",
+  },
+  {
+    // Sport section of The Reporter's English weekly; the site-wide feed
+    // carries no categories, so this uses the section's own feed.
+    id: "reporter-sport",
+    name: "The Reporter Ethiopia",
+    feedUrl: "https://www.thereporterethiopia.com/ethiopian-sport-news/feed/",
+    siteUrl: "https://www.thereporterethiopia.com/ethiopian-sport-news/",
+    language: "en",
+    transparency: "independent",
+    transparencyNote: "Privately owned weekly.",
+    scope: "ethiopia",
+    region: "ethiopia",
+    category: "sports",
+  },
+  {
+    // ስፖርት (sport) section of The Reporter's Amharic edition.
+    id: "ethiopianreporter-sport",
+    name: "ሪፖርተር (Ethiopian Reporter)",
+    feedUrl: "https://www.ethiopianreporter.com/category/sport/feed/",
+    siteUrl: "https://www.ethiopianreporter.com/category/sport/",
+    language: "am",
+    transparency: "independent",
+    transparencyNote: "Amharic edition of The Reporter, a privately owned weekly.",
     scope: "ethiopia",
     region: "ethiopia",
     category: "sports",

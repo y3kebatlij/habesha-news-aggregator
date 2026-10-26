@@ -11,6 +11,13 @@ export type ChangelogEntry = {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    id: "2026-10-26b",
+    title: "More Ethiopian sport",
+    items: [
+      "The Sports section now includes Soccer Ethiopia, Fana's sport desk, and the sport pages of The Reporter in English and Amharic.",
+    ],
+  },
+  {
     id: "2026-10-26",
     title: "News only: no job ads or promotions",
     items: [
