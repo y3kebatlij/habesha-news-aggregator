@@ -38,6 +38,9 @@ parallel-market rates (EthioBlackMarket) need no keys.
   into `Article`s, and caches the result in memory for 15 minutes so page
   loads don't re-hit every feed. If a refetch fails, it falls back to the
   last good cache instead of erroring.
+- `src/lib/promoFilter.ts` — drops items that aren't news (job adverts,
+  vacancy and tender notices, press releases, sponsored and product-launch
+  posts), matched on specific headline and snippet wording.
 - `src/lib/categorize.ts` — keyword-based classifier that buckets each
   article into Politics, Business & Economy, Sports, Fashion & Lifestyle,
   Technology, Diaspora & World, or General.

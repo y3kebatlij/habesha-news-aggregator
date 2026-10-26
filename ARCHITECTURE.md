@@ -61,6 +61,7 @@ not worth it before the ranking basics are validated.
 
 ```
 sources.ts → fetchNews.ts (parallel fetch, normalize, in-memory 15min cache)
+           → promoFilter.ts (drop job ads, tenders, press releases)
            → categorize.ts (keyword bucket)
            → rank.ts (NEW: score + source-diversity ordering)
            → page.tsx / category/[slug]/page.tsx (render)

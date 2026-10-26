@@ -3,6 +3,7 @@ import { SOURCES } from "./sources";
 import { categorize } from "./categorize";
 import { hashId, truncate } from "./text";
 import { classifyBroadArticle } from "./ethiopiaFilter";
+import { isPromotional } from "./promoFilter";
 import { fetchWorldNewsArticles } from "./worldNews";
 import type { Article } from "./types";
 
@@ -219,6 +220,8 @@ async function fetchAllArticles(): Promise<Article[]> {
       seenIds.add(article.id);
       return true;
     })
+    // Job adverts, tender notices and press releases aren't news.
+    .filter((article) => !isPromotional(article.title, article.snippet))
     .filter((article) => {
       const published = article.pubDate ? new Date(article.pubDate).getTime() : NaN;
       return Number.isNaN(published) || published >= cutoff;
