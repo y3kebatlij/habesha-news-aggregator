@@ -11,6 +11,13 @@ export type ChangelogEntry = {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    id: "2026-10-26",
+    title: "News only: no job ads or promotions",
+    items: [
+      "Job openings, vacancy and tender notices, press releases and other promotional posts are now left out, so you only see news.",
+    ],
+  },
+  {
     id: "2026-10-02",
     title: "More sources, and Addis Ababa time & weather",
     items: [
