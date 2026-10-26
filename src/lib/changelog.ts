@@ -11,6 +11,13 @@ export type ChangelogEntry = {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    id: "2026-10-26b",
+    title: "East African football",
+    items: [
+      "The East Africa page now has football news from Kawowo Sports and CECAFA, the regional football body.",
+    ],
+  },
+  {
     id: "2026-10-26",
     title: "News only: no job ads or promotions",
     items: [

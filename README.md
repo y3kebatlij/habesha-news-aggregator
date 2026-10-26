@@ -56,6 +56,10 @@ Zehabesha all publish feeds too, but block automated fetches (403s, Cloudflare
 challenge) — worth retrying later or swapping in a scraper if you want them
 included.
 
+East Africa page: AllAfrica (Kenya, Somalia, Sudan, Eritrea, East Africa),
+plus football from Kawowo Sports and CECAFA. Pan Africa Football was checked
+(2026-10-26) but has no RSS feed, and its sitemaps stopped updating in July 2026.
+
 ## Known limitations / next steps
 
 - Categorization is keyword-based on English text, so Amharic-language

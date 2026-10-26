@@ -396,4 +396,31 @@ export const SOURCES: Source[] = [
     scope: "ethiopia",
     region: "east-africa",
   },
+  {
+    // Ugandan sports site with regional coverage. Its football category feed
+    // leaves out the rugby, netball and cricket on the main feed.
+    id: "kawowo-football",
+    name: "Kawowo Sports",
+    feedUrl: "https://www.kawowo.com/category/football/feed/",
+    siteUrl: "https://www.kawowo.com/category/football/",
+    language: "en",
+    transparency: "unrated",
+    scope: "ethiopia",
+    region: "east-africa",
+    category: "sports",
+  },
+  {
+    // Official news from the Council for East and Central Africa Football
+    // Associations, the regional football body. Publishes a few items a week.
+    id: "cecafa",
+    name: "CECAFA",
+    feedUrl: "https://cecafaonline.com/feed/",
+    siteUrl: "https://cecafaonline.com/",
+    language: "en",
+    transparency: "unrated",
+    transparencyNote: "Official site of the regional football governing body.",
+    scope: "ethiopia",
+    region: "east-africa",
+    category: "sports",
+  },
 ];
