@@ -6,6 +6,7 @@ export const strings = {
   siteName: "Habesha News",
   tagline: "Ethiopian news, all in one place",
   nav: {
+    label: "News sections",
     all: "All",
     eastAfrica: "East Africa",
   },

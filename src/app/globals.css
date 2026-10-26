@@ -34,6 +34,14 @@
   --muted: #9a9691;
 }
 
+/* Scrollable rows that stay swipeable but show no scrollbar (category nav). */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
